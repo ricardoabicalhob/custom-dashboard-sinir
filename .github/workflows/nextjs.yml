@@ -74,15 +74,11 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
 
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-
-      # Adicione esta etapa para resolver o conflito de dependências
-      - name: Resolve date-fns conflict
         run: |
           if [[ "${{ steps.detect-package-manager.outputs.manager }}" == "npm" ]]; then
-            npm install date-fns@^3.0.0 # Ou date-fns@^2.28.0, dependendo da compatibilidade
+            npm install --force
           elif [[ "${{ steps.detect-package-manager.outputs.manager }}" == "yarn" ]]; then
-            yarn add date-fns@^3.0.0 # Ou yarn add date-fns@^2.28.0
+            yarn install --force
           fi
 
       - name: Build with Next.js
