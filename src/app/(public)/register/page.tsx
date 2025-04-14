@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -11,7 +11,7 @@ import { Figtree } from 'next/font/google'
 import CumstomNotification from "@/components/CustomNotification"
 import setCookie from "./action"
 import { Separator } from "@/components/ui/separator"
-import { ChevronRight, LogOut, UserPlus, Waves } from "lucide-react"
+import { ChevronRight, LogOut } from "lucide-react"
 import { CustomButton } from "@/components/CustomButton"
 
 const figtree = Figtree({ weight: '600', subsets: ['latin'] });
@@ -47,15 +47,6 @@ function fullNameFormat(fullName :string) {
   const nameParts = fullName.split(' ')
   const fullNameFormated = nameParts.map(name => name.charAt(0).toUpperCase() + name.substring(1))
   return fullNameFormated.join(' ')
-}
-
-interface AuthenticatedData {
-  id :string
-  name :string
-  email :string
-  password :string
-  createdAt :Date
-  updatedAt :Date
 }
 
 export default function Register() {

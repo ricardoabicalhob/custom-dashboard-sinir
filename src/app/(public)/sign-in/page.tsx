@@ -8,12 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import setCookie from "./action"
 import { redirect } from "next/navigation"
-import Link from "next/link"
 import { Figtree } from 'next/font/google'
 import CumstomNotification from "@/components/CustomNotification"
-import { ChevronRight, UserPlus, Waves } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
-import { CustomButton } from "@/components/CustomButton"
 
 const figtree = Figtree({ weight: '600', subsets: ['latin'] });
 

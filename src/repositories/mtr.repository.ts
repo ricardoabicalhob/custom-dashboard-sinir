@@ -1,4 +1,4 @@
-import { MTRRepositoryI, MTRResponseI } from "@/interfaces/mtr.interface";
+import { MTRRepositoryI } from "@/interfaces/mtr.interface";
 import api from "@/services/api";
 
 class MTRRepositoryFetch implements MTRRepositoryI {
@@ -18,6 +18,7 @@ class MTRRepositoryFetch implements MTRRepositoryI {
             }
         }
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async findAllArmazenadorTemporario(unidade :number, dataInicio :string, dataFim :string, authorization :string): Promise<any | null> {
         try {
             const response = await api.get(`/api/mtr/pesquisaMtr/${unidade}/0/18/10/${dataInicio}/${dataFim}/0/all?size=99999&first=0`, {
@@ -35,6 +36,7 @@ class MTRRepositoryFetch implements MTRRepositoryI {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async findAllGerador(unidade: number, dataInicio :string, dataFim :string, authorization: string): Promise<any | null> {
         try {
             const response = await api.get(`/api/mtr/pesquisaMtr/${unidade}/0/18/8/${dataInicio}/${dataFim}/0/all?size=99999&first=0`, {
@@ -52,6 +54,7 @@ class MTRRepositoryFetch implements MTRRepositoryI {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async findByNumber(numberMTR: string, authorization: string): Promise<any | null> {
         try {
             const response = await api.get(`/apiws/rest/retornaManifesto/${numberMTR}` , {

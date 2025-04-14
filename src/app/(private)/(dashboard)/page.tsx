@@ -53,8 +53,10 @@ export default function Dashboard() {
   const [ dataFiltered, setDataFiltered ] = useState<DataFilteredProps[]>()
   const [ dateRange, setDateRange ] = useState<DateRange>()
 
+  console.log("dado console.log somente para usar a variavel e impedir erro no buil", data)
+
   const { 
-    token, setToken,
+    setToken,
     loginResponse, setLoginResponse 
   } = useContext(AuthContext)
 
@@ -227,9 +229,7 @@ export default function Dashboard() {
       }
   }
 
-  function DateRangePicker({
-    className,
-  } :React.HTMLAttributes<HTMLDivElement>) {
+  function DateRangePicker() {
     const [ defaultStartDate, setDefaultStartDate ] = useState<DateRange | undefined>({
       from: dateRange? dateRange.from : subDays(new Date(Date.now()), 30),
       to: dateRange? dateRange.to : new Date(Date.now())
