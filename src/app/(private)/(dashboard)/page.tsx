@@ -25,6 +25,7 @@ import { GetMTRsArmazTemp } from "./_actions/getMTRsArmazTemp";
 import GraficoDestinacao from "./_components/GraficoDestinacao";
 import GraficoAT from "./_components/GraficoAT";
 import Image from "next/image";
+import logoSinir from "../../../public/logo_sinir_negativa1.png"
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -239,7 +240,7 @@ export default function Dashboard() {
                 <li className="flex items-center gap-5 divide-x divide-[#FFFFFF70]">
                   <ul className="flex items-center text-gray-200 transition-colors">
                     {/* <span className="font-semibold text-2xl">SINIR</span> */}
-                    <Image alt="" src={require("../../../public/logo_sinir_negativa1.png")} width={140} height={80} />
+                    <Image alt="" src={logoSinir} width={140} height={80} />
                   </ul>
                   <ul className="flex items-stretch gap-2 px-5">
                     <div className="flex flex-col">
