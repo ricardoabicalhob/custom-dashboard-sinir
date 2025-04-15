@@ -72,6 +72,7 @@ class MTRRepositoryFetch implements MTRRepositoryI {
         }
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async findAllReceivedInTemporaryStorage(unidade: number, dataInicio: string, dataFim: string, authorization: string): Promise<any | null> {
         try {
             const response = await api.get(`/api/mtr/pesquisaManifestoRelatorioMtr/${unidade}/18/10/${dataInicio}/${dataFim}/5/0/9/0`, {
