@@ -10,6 +10,7 @@ import setCookie from "./action"
 import { redirect } from "next/navigation"
 import { Figtree } from 'next/font/google'
 import CumstomNotification from "@/components/CustomNotification"
+import Image from "next/image"
 
 const figtree = Figtree({ weight: '600', subsets: ['latin'] });
 
@@ -71,8 +72,9 @@ export default function SignIn() {
     <main id="containerprincipal" className="flex items-stretch">  
       <div className="bg-[#00695C] flex-1 max-[1100px]:hidden">
         <div className="flex flex-col gap-3 w-full h-full items-center justify-center">
-          <span className="text-gray-200 text-5xl font-bold">SINIR</span>
-          <span className="text-gray-200 text-3xl font-bold">Destinação de Resíduos</span>
+          <Image alt="" src={require("../../../public/logo_sinir_negativa1.png")} width={250} height={80} />
+          {/* <span className="text-gray-200 text-5xl font-bold">SINIR</span> */}
+          <span className="text-gray-200 text-3xl font-bold">Gestão de Resíduos Integrada ao SINIR</span>
         </div>
       </div>
 

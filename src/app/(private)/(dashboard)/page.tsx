@@ -24,6 +24,7 @@ import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { GetMTRsArmazTemp } from "./_actions/getMTRsArmazTemp";
 import GraficoDestinacao from "./_components/GraficoDestinacao";
 import GraficoAT from "./_components/GraficoAT";
+import Image from "next/image";
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -229,7 +230,6 @@ export default function Dashboard() {
           <nav aria-label="Menu de navegação mobile" className="overflow-x-clip border-b border-[#333339] xl:block bg-[#1A1A1E]">
             <div className="relative">
               <ul aria-orientation="horizontal" className="flex items-center justify-between border-b border-gray-700 px-5 py-4 xl:hidden">
-                {/* <CustomMenu token={token} initialsName={getUserNameInitials()} logoutAction={handleDisconnect} loginResponse={loginResponse}/> */}
               </ul>
             </div>
           </nav>
@@ -238,8 +238,8 @@ export default function Dashboard() {
               <ul aria-orientation="horizontal" className="mx-auto hidden max-w-[120rem] items-center justify-between p-4 text-sm xl:flex xl:px-5">
                 <li className="flex items-center gap-5 divide-x divide-[#FFFFFF70]">
                   <ul className="flex items-center text-gray-200 transition-colors">
-                    {/* <CustomMenu token={token} initialsName={getUserNameInitials()} logoutAction={handleDisconnect} loginResponse={loginResponse}/> */}
-                    <span className="font-semibold text-2xl">SINIR</span>
+                    {/* <span className="font-semibold text-2xl">SINIR</span> */}
+                    <Image alt="" src={require("../../../public/logo_sinir_negativa1.png")} width={140} height={80} />
                   </ul>
                   <ul className="flex items-stretch gap-2 px-5">
                     <div className="flex flex-col">
