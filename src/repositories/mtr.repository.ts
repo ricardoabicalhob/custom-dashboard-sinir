@@ -71,5 +71,22 @@ class MTRRepositoryFetch implements MTRRepositoryI {
             }
         }
     }
+
+    async findAllReceivedInTemporaryStorage(unidade: number, dataInicio: string, dataFim: string, authorization: string): Promise<any | null> {
+        try {
+            const response = await api.get(`/api/mtr/pesquisaManifestoRelatorioMtr/${unidade}/18/10/${dataInicio}/${dataFim}/5/0/9/0`, {
+                headers: {
+                    "Authorization": `Bearer ${authorization}`
+                }
+            })
+            return response.data
+        } catch (error :unknown) {
+            if(error instanceof Error) {
+                throw new Error(error.message || 'Ocorreu um erro no repositório.')
+            } else {
+                throw new Error("Erro desconhecido")
+            }
+        }
+    }
 }
 export { MTRRepositoryFetch }

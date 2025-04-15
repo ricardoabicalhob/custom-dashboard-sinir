@@ -25,6 +25,9 @@ import { CalendarIcon, LogOut } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { GetMTRsArmazTemp } from "./_actions/getMTRsArmazTemp";
+import GraficoDestinacao from "./_components/GraficoDestinacao";
+import GraficoAT from "./_components/GraficoAT";
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -34,7 +37,7 @@ const periodoSchema = z.object({
 })
 type periodoSchema = z.infer<typeof periodoSchema>
 
-interface DataFilteredProps {
+export interface DataFilteredProps {
   numeroMtr :string, 
   unidadeDescricao :string,
   destinadorDescricao :string,
@@ -43,7 +46,8 @@ interface DataFilteredProps {
   quantidadeEstimada :number, 
   quantidadeReal :number, 
   situacao :string, 
-  medidaUnidade :string
+  medidaUnidade :string,
+  dataRecebimentoAT :string
 }
 
 export default function Dashboard() {
@@ -51,6 +55,7 @@ export default function Dashboard() {
   const [ auth, setAuth ] = useState<string>()
   const [ data, setData ] = useState<MTRResponseI[]>()
   const [ dataFiltered, setDataFiltered ] = useState<DataFilteredProps[]>()
+  const [ dataFilteredArmazTemp, setDataFilteredArmazTemp ] = useState<DataFilteredProps[]>()
   const [ dateRange, setDateRange ] = useState<DateRange>()
 
   console.log("dado console.log somente para usar a variavel e impedir erro no buil", data)
@@ -77,6 +82,12 @@ export default function Dashboard() {
           setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
           setDataFiltered(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
         })
+
+      const responseAT = GetMTRsArmazTemp(auth, loginResponse, periodo.from, periodo.to)
+      Promise.resolve(responseAT)
+        .then(response => {
+          setDataFilteredArmazTemp(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
+        })
     }
   }, [auth])
 
@@ -97,116 +108,6 @@ export default function Dashboard() {
     )
   }
 
-  interface GraficoProps {
-    dataFiltered? :DataFilteredProps[]
-  }
-
-  interface TotalQuantidadesPorResiduo {
-    residuoDescricao: string;
-    quantidadeEstimada: number;
-    quantidadeReal: number;
-  }
-
-  function Grafico({ dataFiltered } :GraficoProps) {
-
-    function totalizarQuantidadesPorResiduo(data: DataFilteredProps[]): TotalQuantidadesPorResiduo[] {
-      if (!data) {
-        return []
-      }
-    
-      const quantidadesAgrupadas: {
-        [residuoDescricao: string]: {
-          quantidadeEstimada: number;
-          quantidadeReal: number;
-        };
-      } = data.reduce((acumulador, item) => {
-        const { residuoDescricao, quantidadeEstimada, quantidadeReal } = item;
-    
-        if (acumulador[residuoDescricao]) {
-          acumulador[residuoDescricao].quantidadeEstimada += quantidadeEstimada;
-          acumulador[residuoDescricao].quantidadeReal += quantidadeReal;
-        } else {
-          acumulador[residuoDescricao] = { quantidadeEstimada, quantidadeReal };
-        }
-    
-        return acumulador
-      }, {} as { [key: string]: { quantidadeEstimada: number; quantidadeReal: number } });
-    
-      return Object.entries(quantidadesAgrupadas).map(
-        ([residuoDescricao, quantidades]) => ({
-          residuoDescricao,
-          quantidadeEstimada: quantidades.quantidadeEstimada,
-          quantidadeReal: quantidades.quantidadeReal,
-        })
-      );
-    }
-
-    const chartConfig = {
-      desktop: {
-        label: "Desktop",
-        color: "#00695C",
-      },
-      mobile: {
-        label: "Mobile",
-        color: "#00695C80",
-      },
-    } satisfies ChartConfig
-
-    return(
-      <Card className="w-full md:w-[100%] max-w-4xl justify-self-center">
-        <CardHeader>
-          <div className="flex items-center justify-center">
-            <CardTitle className="text-lg sm:text-xl text-gray-800">
-                {`Destinação de resíduos ${dateRange ?  "no período de " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
-            </CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ChartContainer config={chartConfig} className="max-h-[300px] w-full">
-              
-              <BarChart data={totalizarQuantidadesPorResiduo(dataFiltered || [])}>
-                  <CartesianGrid vertical={false}/>
-                  <XAxis
-                      className="select-none"
-                      dataKey="residuoDescricao"
-                      tickLine={false}
-                      tickMargin={10}
-                      fontSize={12}
-                      axisLine={false}
-                      tickFormatter={(value)=>value}
-                  />
-
-                  <YAxis 
-                      stroke="#888888"
-                      fontSize={12}
-                      tickLine={false}
-                      axisLine={false}
-                      tickFormatter={(value)=>`${value} TON`}
-                  />
-
-                  <ChartTooltip content={<ChartTooltipContent/>}/>
-                  <ChartLegend content={<ChartLegendContent/>}/>
-                  <CartesianGrid vertical={false}/>
-
-                  <Bar
-                      dataKey="quantidadeEstimada"
-                      fill="var(--color-desktop)"
-                      radius={[4, 4, 0, 0]}
-                  />
-
-                  <Bar
-                      dataKey="quantidadeReal"
-                      fill="var(--color-mobile)"
-                      radius={[4, 4, 0, 0]}
-                  />
-              </BarChart>
-
-          </ChartContainer>
-        </CardContent>
-      </Card>
-    )
-  }
-
   function handleSelectDate(valueSelected :DateRange | undefined) {
     if(valueSelected) {
       const inicioPeriodo = valueSelected?.from?.toLocaleDateString("pt-BR").replace(/\//g, "-")
@@ -218,8 +119,15 @@ export default function Dashboard() {
   function handlePesquisar(periodo :{ from :string | undefined, to :string | undefined }) {
       setData([])
       setDataFiltered([])
-
+      setDataFilteredArmazTemp([])
+      
       if(auth && loginResponse && periodo.from && periodo.to) {
+        const responseArmazTemp = GetMTRsArmazTemp(auth, loginResponse, periodo.from, periodo.to)
+        Promise.resolve(responseArmazTemp)
+          .then(response => {
+            setDataFilteredArmazTemp(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
+          })
+
         const response = GetMTRs(auth, loginResponse, periodo.from, periodo.to)
         Promise.resolve(response)
           .then(response => {
@@ -231,7 +139,7 @@ export default function Dashboard() {
 
   function DateRangePicker() {
     const [ defaultStartDate, setDefaultStartDate ] = useState<DateRange | undefined>({
-      from: dateRange? dateRange.from : subDays(new Date(Date.now()), 30),
+      from: dateRange? dateRange.from : subDays(new Date(Date.now()), 31),
       to: dateRange? dateRange.to : new Date(Date.now())
     })
 
@@ -364,10 +272,24 @@ export default function Dashboard() {
         </header>
         <main>
           <div className="w-full h-[calc(100vh-73px)] p-6 gap-2 relative bg-white">
-            <Grafico dataFiltered={dataFiltered}/>
+            <div className="grid grid-cols-1 gap-2">
+
+              <GraficoDestinacao 
+                dataFiltered={dataFiltered}
+                title={`Destinação de resíduos`}
+                subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
+              />
+
+              {loginResponse && loginResponse.objetoResposta && !!loginResponse.objetoResposta.armazenadorTemporario && 
+                <GraficoAT
+                  title={`Quantidade estimada em Armazenamento Temporário`}
+                  subTitle={`MTRs emitidos no período de ${dateRange? dateRange.from?.toLocaleDateString() + " a " + dateRange.to?.toLocaleDateString() :""}`}
+                  dataFiltered={dataFilteredArmazTemp}
+                />}
+            </div>
             <br/>
             <br/>
-            <Table>
+            {/* <Table>
               <TableCaption>Uma lista de seus manifestos</TableCaption>
               <TableHeader>
                 <TableRow>
@@ -378,7 +300,6 @@ export default function Dashboard() {
                   <TableHead>Quantidade Estimada</TableHead>
                   <TableHead>Quantidade Real</TableHead>
                   <TableHead>Situação</TableHead>
-                  {/* <TableHead>Download</TableHead> */}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -390,15 +311,41 @@ export default function Dashboard() {
                   <TableCell className="text-black">{item.destinadorDescricao}</TableCell>
                   <TableCell className="text-black">{`${item.residuoCodigoIbama} - ${item.residuoDescricao}`}</TableCell>
                   <TableCell className="text-black text-right">{`${item.quantidadeEstimada.toFixed(2)} ${item.medidaUnidade}`}</TableCell>
-                  <TableCell className="text-black text-right">{`${item.quantidadeReal.toFixed(2)} ${item.medidaUnidade}`}</TableCell>
+                  <TableCell className="text-black text-right">{`${item.quantidadeReal?.toFixed(2) || "-"} ${item.quantidadeReal? item.medidaUnidade :""}`}</TableCell>
                   <TableCell className="text-black">{item.situacao}</TableCell>
-                  {/* <TableCell className="text-black"><Download onClick={async ()=> await downloadMTR(item.numeroMtr, auth || "")} className="w-full text-center select-none cursor-pointer h-4" /></TableCell> */}
                 </TableRow>
               ))
             }    
               </TableBody>
             </Table>
                    
+            <Table>
+              <TableCaption>Uma lista de seus manifestos para armazenamento temporário</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Número do MTR</TableHead>
+                  <TableHead>Gerador</TableHead>
+                  <TableHead>Resíduo</TableHead>
+                  <TableHead>Quantidade Estimada</TableHead>
+                  <TableHead>Data do recebimento no AT</TableHead>
+                  <TableHead>Situação</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+              {
+              dataFilteredArmazTemp?.map(item => (
+                <TableRow key={item.numeroMtr}>
+                  <TableCell className="text-black font-semibold">{item.numeroMtr}</TableCell>
+                  <TableCell className="text-black">{item.unidadeDescricao}</TableCell>
+                  <TableCell className="text-black">{`${item.residuoCodigoIbama} - ${item.residuoDescricao}`}</TableCell>
+                  <TableCell className="text-black text-right">{`${item.quantidadeEstimada.toFixed(2)} ${item.medidaUnidade}`}</TableCell>
+                  <TableCell className="text-black text-right">{`${item.dataRecebimentoAT}`}</TableCell>
+                  <TableCell className="text-black">{item.situacao}</TableCell>
+                </TableRow>
+              ))
+            }    
+              </TableBody>
+            </Table> */}
           </div>
           
         </main>      
