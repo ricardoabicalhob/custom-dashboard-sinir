@@ -26,11 +26,6 @@ class MTRUseCases {
         const result = this.mtrRepositoryFetch.findByNumber(numberMTR, authorization)
         return result
     }
-
-    findAllReceivedInTemporaryStorage(unidade: number, dataInicio: string, dataFim: string, authorization: string) {
-        const result = this.mtrRepositoryFetch.findAllReceivedInTemporaryStorage(unidade, dataInicio, dataFim, authorization)
-        return result
-    }
 }
 
 export { MTRUseCases }

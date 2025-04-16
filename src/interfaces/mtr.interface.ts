@@ -187,5 +187,4 @@ export interface MTRRepositoryI {
     findAllArmazenadorTemporario(unidade :number, dataInicio :string, dataFim :string, authorization :string) :Promise<unknown | null>
     findAllGerador(unidade :number, dataInicio :string, dataFim :string, authorization :string) :Promise<unknown | null>
     findByNumber(numberMTR :string, authorization :string) :Promise<unknown | null>
-    findAllReceivedInTemporaryStorage(unidade :number, dataInicio :string, dataFim :string, authorization :string) :Promise<unknown | null>
 }

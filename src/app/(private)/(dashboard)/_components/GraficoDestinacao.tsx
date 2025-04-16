@@ -82,6 +82,8 @@ export default function GraficoDestinacao({ dataFiltered, title, subTitle } :Gra
               subTitle &&
                 <CardTitle className="font-light">{subTitle}</CardTitle>
             }
+            <CardTitle>{`Total: ${totalizarQuantidadesPorResiduo(dataFiltered || []).reverse()[0].quantidadeReal.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TON`}</CardTitle>
+
           </div>
         </CardHeader>
         <CardContent>

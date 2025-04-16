@@ -7,7 +7,6 @@ import { AuthContext } from "@/lib/authcontext";
 import { AuthToken } from "@/lib/types";
 import jwt from "jsonwebtoken";
 import { LoginResponseI } from "@/interfaces/login.interface";
-import { MTRResponseI } from "@/interfaces/mtr.interface";
 import { GetMTRs } from "./_actions/getMTRs";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -51,12 +50,13 @@ export interface DataFilteredProps {
 export default function Dashboard() {
 
   const [ auth, setAuth ] = useState<string>()
-  const [ data, setData ] = useState<MTRResponseI[]>()
   const [ dataFiltered, setDataFiltered ] = useState<DataFilteredProps[]>()
   const [ dataFilteredArmazTemp, setDataFilteredArmazTemp ] = useState<DataFilteredProps[]>()
   const [ dateRange, setDateRange ] = useState<DateRange>()
 
-  console.log("dado console.log somente para usar a variavel e impedir erro no buil", data)
+  //------------------------------------------------------------------------------------------
+  // console.log("dado console.log somente para usar a variavel e impedir erro no buil", data)
+  //------------------------------------------------------------------------------------------
 
   const { 
     setToken,
@@ -72,16 +72,18 @@ export default function Dashboard() {
   }
 
   useEffect(()=> {
-    const periodo = handleSelectDate(dateRange)
-    if(auth && loginResponse && periodo?.from && periodo.to) {
-      const response = GetMTRs(auth, loginResponse, periodo?.from, periodo?.to)
+    const periodoG = handleSelectDate(dateRange)
+    const periodoAt = handleSelectDate({ from: subDays(new Date(Date.now()), 90), to: new Date(Date.now()) })
+    
+    if(auth && loginResponse && periodoG?.from && periodoG.to && periodoAt?.from && periodoAt.to) {
+      const response = GetMTRs(auth, loginResponse, periodoG?.from, periodoG?.to)
       Promise.resolve(response)
         .then(response => {
-          setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
+          // setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
           setDataFiltered(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
         })
 
-      const responseAT = GetMTRsArmazTemp(auth, loginResponse, periodo.from, periodo.to)
+      const responseAT = GetMTRsArmazTemp(auth, loginResponse, periodoAt.from, periodoAt.to)
       Promise.resolve(responseAT)
         .then(response => {
           setDataFilteredArmazTemp(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
@@ -115,12 +117,13 @@ export default function Dashboard() {
   }
 
   function handlePesquisar(periodo :{ from :string | undefined, to :string | undefined }) {
-      setData([])
+      // setData([])
       setDataFiltered([])
       setDataFilteredArmazTemp([])
+      const periodoAt = handleSelectDate({ from: subDays(new Date(Date.now()), 90), to: new Date(Date.now()) })
       
-      if(auth && loginResponse && periodo.from && periodo.to) {
-        const responseArmazTemp = GetMTRsArmazTemp(auth, loginResponse, periodo.from, periodo.to)
+      if(auth && loginResponse && periodo.from && periodo.to && periodoAt?.from && periodoAt.to) {
+        const responseArmazTemp = GetMTRsArmazTemp(auth, loginResponse, periodoAt.from, periodoAt.to)
         Promise.resolve(responseArmazTemp)
           .then(response => {
             setDataFilteredArmazTemp(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
@@ -129,7 +132,7 @@ export default function Dashboard() {
         const response = GetMTRs(auth, loginResponse, periodo.from, periodo.to)
         Promise.resolve(response)
           .then(response => {
-            setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
+            // setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
             setDataFiltered(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
           })
       }
@@ -280,7 +283,7 @@ export default function Dashboard() {
               {loginResponse && loginResponse.objetoResposta && !!loginResponse.objetoResposta.armazenadorTemporario && 
                 <GraficoAT
                   title={`Quantidade estimada em Armazenamento Temporário`}
-                  subTitle={`MTRs emitidos no período de ${dateRange? dateRange.from?.toLocaleDateString() + " a " + dateRange.to?.toLocaleDateString() :""}`}
+                  subTitle={`MTRs emitidos no período de ${subDays(new Date(Date.now()), 90).toLocaleDateString()} a ${new Date(Date.now()).toLocaleDateString()} (Últimos 90 dias)`}
                   dataFiltered={dataFilteredArmazTemp}
                 />}
             </div>

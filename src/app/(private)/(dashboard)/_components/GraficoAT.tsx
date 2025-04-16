@@ -72,6 +72,7 @@ export default function GraficoAT({ dataFiltered, title, subTitle } :GraficoProp
               subTitle &&
                 <CardTitle className="font-light">{subTitle}</CardTitle>
             }
+            <CardTitle>{`Total acumulado: ${totalizarQuantidadesPorResiduo(dataFiltered || []).reverse()[0].quantidadeEstimada.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} TON`}</CardTitle>
           </div>
         </CardHeader>
         <CardContent>

@@ -1,10 +1,14 @@
+'use client'
+
 import type { Metadata } from "next";
 import "./globals.css";
+import { QueryClientProvider } from "react-query";
+import { queryClient } from "@/services/queryClient";
 
-export const metadata: Metadata = {
-  title: "Gestão de Resíduos - SINIR",
-  description: "Ferramenta de análise para gestão de resíduos integrada ao SINIR",
-};
+// export const metadata: Metadata = {
+//   title: "Gestão de Resíduos - SINIR",
+//   description: "Ferramenta de análise para gestão de resíduos integrada ao SINIR",
+// };
 
 export default function RootLayout({
   children,
@@ -12,8 +16,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang={`pt-BR`}>
-      <body>{children}</body>
-    </html>
+    <QueryClientProvider client={queryClient}>
+      <html lang={`pt-BR`}>
+        <body>{children}</body>
+      </html>
+    </QueryClientProvider>
   );
 }
