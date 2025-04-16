@@ -259,7 +259,7 @@ export default function Dashboard() {
                     
                 </li>
                   <div 
-                    className="bg-[#00BCD4] flex justify-end rounded-full p-2 text-white font-semibold select-none cursor-pointer"
+                    className="bg-[#00BCD4] flex justify-end rounded-full shadow-md shadow-black/40 p-2 text-white font-semibold select-none cursor-pointer"
                     onClick={()=> handleDisconnect()}  
                   >
                     <LogOut />
