@@ -31,8 +31,11 @@ export async function GetMTRs(auth :string, loginResponse :LoginResponseI, dataI
                         })
                         .map(mtrDataFiltrado => (mtrDataFiltrado as MTRCompleteResponseI).objetoResposta)
 
-                    const data :unknown[] = [...allObjectsResponse]
-                    const dataFiltered :unknown[] = allObjectsResponse.map(mtrToFilter => ({
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const data :any[] = [...allObjectsResponse]
+
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const dataFiltered :any[] = allObjectsResponse.map(mtrToFilter => ({
                         numeroMtr: mtrToFilter.manNumero,
                         residuoDescricao: mtrToFilter.listaManifestoResiduo[0]?.residuo?.resDescricao,
                         residuoCodigoIbama: mtrToFilter.listaManifestoResiduo[0]?.residuo?.resCodigoIbama,

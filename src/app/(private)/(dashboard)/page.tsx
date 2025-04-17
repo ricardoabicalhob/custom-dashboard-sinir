@@ -25,6 +25,8 @@ import GraficoDestinacao from "./_components/GraficoDestinacao";
 import GraficoAT from "./_components/GraficoAT";
 import Image from "next/image";
 import logoSinir from "../../../public/logo_sinir_negativa1.png"
+import GraficoDestinacaoMini from "./_components/GraficoDestinacaoMini";
+import { Separator } from "@/components/ui/separator";
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -50,8 +52,10 @@ export interface DataFilteredProps {
 export default function Dashboard() {
 
   const [ auth, setAuth ] = useState<string>()
-  const [ dataFiltered, setDataFiltered ] = useState<DataFilteredProps[]>()
-  const [ dataFilteredArmazTemp, setDataFilteredArmazTemp ] = useState<DataFilteredProps[]>()
+  const [ sentAsGenerator, setSentAsGenerator ] = useState<DataFilteredProps[]>()
+  const [ sentAsAT, setSentAsAT ] = useState<DataFilteredProps[]>()
+  const [ sentAsGeneratorAndAT, setSentAsGeneratorAndAT ] = useState<DataFilteredProps[]>()
+  const [ dataFilteredAccumulatedInAT, setDataFilteredAccumulatedInAT ] = useState<DataFilteredProps[]>()
   const [ dateRange, setDateRange ] = useState<DateRange>()
 
   //------------------------------------------------------------------------------------------
@@ -79,14 +83,15 @@ export default function Dashboard() {
       const response = GetMTRs(auth, loginResponse, periodoG?.from, periodoG?.to)
       Promise.resolve(response)
         .then(response => {
-          // setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
-          setDataFiltered(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
+          setSentAsGeneratorAndAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
+          setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.dataFiltered || []])
+          setSentAsGenerator(prevData => [...(prevData || []), ...response.gerador?.dataFiltered || []])
         })
 
       const responseAT = GetMTRsArmazTemp(auth, loginResponse, periodoAt.from, periodoAt.to)
       Promise.resolve(responseAT)
         .then(response => {
-          setDataFilteredArmazTemp(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
+          setDataFilteredAccumulatedInAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
         })
     }
   }, [auth])
@@ -118,22 +123,25 @@ export default function Dashboard() {
 
   function handlePesquisar(periodo :{ from :string | undefined, to :string | undefined }) {
       // setData([])
-      setDataFiltered([])
-      setDataFilteredArmazTemp([])
+      setSentAsGeneratorAndAT([])
+      setDataFilteredAccumulatedInAT([])
+      setSentAsGenerator([])
+      setSentAsAT([])
       const periodoAt = handleSelectDate({ from: subDays(new Date(Date.now()), 90), to: new Date(Date.now()) })
       
       if(auth && loginResponse && periodo.from && periodo.to && periodoAt?.from && periodoAt.to) {
         const responseArmazTemp = GetMTRsArmazTemp(auth, loginResponse, periodoAt.from, periodoAt.to)
         Promise.resolve(responseArmazTemp)
           .then(response => {
-            setDataFilteredArmazTemp(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
+            setDataFilteredAccumulatedInAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
           })
 
         const response = GetMTRs(auth, loginResponse, periodo.from, periodo.to)
         Promise.resolve(response)
           .then(response => {
-            // setData(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.data || [], ...response.gerador?.data ||[]])
-            setDataFiltered(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
+            setSentAsGeneratorAndAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
+            setSentAsGenerator(prevData => [...(prevData ||[]), ...response.gerador?.dataFiltered || []])
+            setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.dataFiltered || []])
           })
       }
   }
@@ -271,22 +279,55 @@ export default function Dashboard() {
           </nav>
         </header>
         <main>
-          <div className="w-full h-[calc(100vh-73px)] p-6 gap-2 relative bg-white">
-            <div className="grid grid-cols-1 gap-2">
+          <div className="w-full h-[calc(100vh-73px)] p-3 gap-2 relative bg-white">
+            {
+              loginResponse && loginResponse.objetoResposta.armazenadorTemporario
+              ?
+                <div className="grid grid-cols-1 gap-4">
 
-              <GraficoDestinacao 
-                dataFiltered={dataFiltered}
-                title={`Destinação de resíduos`}
-                subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
-              />
+                  <div className="grid grid-cols-2 gap-2">
+                    <GraficoDestinacao 
+                      dataFiltered={sentAsGeneratorAndAT}
+                      title={`Destinação de resíduos como Gerador + Armazenamento Temporário`}
+                      subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
+                    />
+                    
+                    <div className={`grid ${loginResponse?.objetoResposta.armazenadorTemporario? "grid-rows-2" : "grid-rows-1"} gap-2`}>
+                      <GraficoDestinacaoMini 
+                        dataFiltered={sentAsGenerator}
+                        title={`Destinação de resíduos como Gerador`}
+                        subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
+                      />
 
-              {loginResponse && loginResponse.objetoResposta && !!loginResponse.objetoResposta.armazenadorTemporario && 
-                <GraficoAT
-                  title={`Quantidade estimada em Armazenamento Temporário`}
-                  subTitle={`MTRs emitidos no período de ${subDays(new Date(Date.now()), 90).toLocaleDateString()} a ${new Date(Date.now()).toLocaleDateString()} (Últimos 90 dias)`}
-                  dataFiltered={dataFilteredArmazTemp}
-                />}
-            </div>
+                      <GraficoDestinacaoMini 
+                        dataFiltered={sentAsAT}
+                        title={`Destinação de resíduos do Armazenamento Temporário`}
+                        subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
+                      />
+                    </div>
+                  </div>
+
+                  <Separator className="h-1"/>
+                  
+                  <GraficoAT
+                    title={`Quantidade estimada em Armazenamento Temporário`}
+                    subTitle={`MTRs emitidos no período de ${subDays(new Date(Date.now()), 90).toLocaleDateString()} a ${new Date(Date.now()).toLocaleDateString()} (Últimos 90 dias)`}
+                    dataFiltered={dataFilteredAccumulatedInAT}
+                  />
+                </div>
+              :
+                <div className="grid grid-cols-1 gap-4">
+
+                  <div className="grid grid-cols-1 gap-2">
+                    <GraficoDestinacao 
+                      dataFiltered={sentAsGenerator}
+                      title={`Destinação de resíduos como Gerador`}
+                      subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
+                    />
+                  </div>
+
+                </div>
+            }
             <br/>
             <br/>
             {/* <Table>

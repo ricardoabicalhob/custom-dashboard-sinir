@@ -72,7 +72,7 @@ export default function GraficoDestinacao({ dataFiltered, title, subTitle } :Gra
     } satisfies ChartConfig
 
     return(
-      <Card className="w-full md:w-[100%] max-w-7xl justify-self-center">
+      <Card className="w-full md:w-[100%] max-w-full justify-self-center">
         <CardHeader>
           <div className="flex flex-col gap-2 items-center justify-center">
             <CardTitle className="text-lg sm:text-xl text-gray-800">
@@ -87,7 +87,7 @@ export default function GraficoDestinacao({ dataFiltered, title, subTitle } :Gra
           </div>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="max-h-[300px] w-full">
+          <ChartContainer config={chartConfig} className={`max-h-[300px] w-full`}>
               
               <BarChart data={totalizarQuantidadesPorResiduo(dataFiltered || [])}>
                   <CartesianGrid vertical={false}/>
@@ -96,14 +96,14 @@ export default function GraficoDestinacao({ dataFiltered, title, subTitle } :Gra
                       dataKey="residuoDescricao"
                       tickLine={false}
                       tickMargin={10}
-                      fontSize={12}
+                      fontSize={10}
                       axisLine={false}
                       tickFormatter={(value)=>value}
                   />
 
                   <YAxis 
                       stroke="#888888"
-                      fontSize={12}
+                      fontSize={10}
                       tickLine={false}
                       axisLine={false}
                       tickFormatter={(value)=>`${value} TON`}
@@ -117,12 +117,14 @@ export default function GraficoDestinacao({ dataFiltered, title, subTitle } :Gra
                       dataKey="quantidadeEstimada"
                       fill="var(--color-desktop)"
                       radius={[4, 4, 0, 0]}
+                      barSize={40}
                   />
 
                   <Bar
                       dataKey="quantidadeReal"
                       fill="var(--color-mobile)"
                       radius={[4, 4, 0, 0]}
+                      barSize={40}
                   />
               </BarChart>
 

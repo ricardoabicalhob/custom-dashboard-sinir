@@ -48,7 +48,7 @@ export interface LoginResponseI {
         transportador :unknown
         transportadorANP :boolean
         destinadorANP :boolean
-        armazenadorTemporario :unknown
+        armazenadorTemporario :boolean
         delegatario :boolean
         operadorLR :boolean
         destinadorLR :boolean
