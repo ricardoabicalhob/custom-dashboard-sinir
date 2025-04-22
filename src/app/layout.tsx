@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/lib/authcontext";
 
 export const metadata: Metadata = {
   title: "Gestão de Resíduos - SINIR",
@@ -12,8 +13,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang={`pt-BR`}>
-      <body>{children}</body>
-    </html>
+    <AuthProvider>
+      <html lang={`pt-BR`}>
+        <body>{children}</body>
+      </html>
+    </AuthProvider>
   );
 }

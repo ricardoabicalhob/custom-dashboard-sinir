@@ -51,7 +51,7 @@ export interface DataFilteredProps {
 
 export default function Dashboard() {
 
-  const [ auth, setAuth ] = useState<string>()
+  // const [ auth, setAuth ] = useState<string>()
   const [ sentAsGenerator, setSentAsGenerator ] = useState<DataFilteredProps[]>()
   const [ sentAsAT, setSentAsAT ] = useState<DataFilteredProps[]>()
   const [ sentAsGeneratorAndAT, setSentAsGeneratorAndAT ] = useState<DataFilteredProps[]>()
@@ -63,42 +63,42 @@ export default function Dashboard() {
   //------------------------------------------------------------------------------------------
 
   const { 
-    setToken,
+    token,
     loginResponse, setLoginResponse 
   } = useContext(AuthContext)
 
-  async function initialize() {
-    const tokenData :LoginResponseI = await getCookie()
-    setLoginResponse(tokenData)
-    const tokenDecoded = jwt.decode(tokenData.objetoResposta.token, {complete: true})
-    setToken(tokenDecoded?.payload as AuthToken)
-    setAuth(tokenData.objetoResposta.token)
-  }
+  // async function initialize() {
+  //   const tokenData :LoginResponseI = await getCookie()
+  //   setLoginResponse(tokenData)
+  //   const tokenDecoded = jwt.decode(tokenData.objetoResposta.token, {complete: true})
+  //   setToken(tokenDecoded?.payload as AuthToken)
+  //   setAuth(tokenData.objetoResposta.token)
+  // }
 
   useEffect(()=> {
     const periodoG = handleSelectDate(dateRange)
     const periodoAt = handleSelectDate({ from: subDays(new Date(Date.now()), 90), to: new Date(Date.now()) })
     
-    if(auth && loginResponse && periodoG?.from && periodoG.to && periodoAt?.from && periodoAt.to) {
-      const response = GetMTRs(auth, loginResponse, periodoG?.from, periodoG?.to)
+    if(token && loginResponse && periodoG?.from && periodoG.to && periodoAt?.from && periodoAt.to) {
+      const response = GetMTRs(token, loginResponse, periodoG?.from, periodoG?.to)
       Promise.resolve(response)
         .then(response => {
-          setSentAsGeneratorAndAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
-          setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.dataFiltered || []])
-          setSentAsGenerator(prevData => [...(prevData || []), ...response.gerador?.dataFiltered || []])
+          setSentAsGeneratorAndAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || [], ...response.gerador?.allMTRsReceivedFiltered || []])
+          setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || []])
+          setSentAsGenerator(prevData => [...(prevData || []), ...response.gerador?.allMTRsReceivedFiltered || []])
         })
 
-      const responseAT = GetMTRsArmazTemp(auth, loginResponse, periodoAt.from, periodoAt.to)
+      const responseAT = GetMTRsArmazTemp(token, loginResponse, periodoAt.from, periodoAt.to)
       Promise.resolve(responseAT)
         .then(response => {
           setDataFilteredAccumulatedInAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
         })
     }
-  }, [auth])
+  }, [token])
 
-  useEffect(()=> {
-    initialize()
-  }, [])
+  // useEffect(()=> {
+  //   initialize()
+  // }, [])
 
   function handleDisconnect() {
     deleteCookie()
@@ -129,19 +129,19 @@ export default function Dashboard() {
       setSentAsAT([])
       const periodoAt = handleSelectDate({ from: subDays(new Date(Date.now()), 90), to: new Date(Date.now()) })
       
-      if(auth && loginResponse && periodo.from && periodo.to && periodoAt?.from && periodoAt.to) {
-        const responseArmazTemp = GetMTRsArmazTemp(auth, loginResponse, periodoAt.from, periodoAt.to)
+      if(token && loginResponse && periodo.from && periodo.to && periodoAt?.from && periodoAt.to) {
+        const responseArmazTemp = GetMTRsArmazTemp(token, loginResponse, periodoAt.from, periodoAt.to)
         Promise.resolve(responseArmazTemp)
           .then(response => {
             setDataFilteredAccumulatedInAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
           })
 
-        const response = GetMTRs(auth, loginResponse, periodo.from, periodo.to)
+        const response = GetMTRs(token, loginResponse, periodo.from, periodo.to)
         Promise.resolve(response)
           .then(response => {
-            setSentAsGeneratorAndAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.dataFiltered || [], ...response.gerador?.dataFiltered || []])
-            setSentAsGenerator(prevData => [...(prevData ||[]), ...response.gerador?.dataFiltered || []])
-            setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.dataFiltered || []])
+            setSentAsGeneratorAndAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || [], ...response.gerador?.allMTRsReceivedFiltered || []])
+            setSentAsGenerator(prevData => [...(prevData ||[]), ...response.gerador?.allMTRsReceivedFiltered || []])
+            setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || []])
           })
       }
   }
@@ -247,7 +247,7 @@ export default function Dashboard() {
           </nav>
           <nav aria-label="Menu de navegação desktop" className="hidden overflow-x-clip border-b border-gray-200 xl:block bg-[#00695C]">
             <div className="relative">
-              <ul aria-orientation="horizontal" className="mx-auto hidden max-w-[120rem] items-center justify-between p-4 text-sm xl:flex xl:px-5">
+              <ul aria-orientation="horizontal" className="mx-auto hidden max-w-[120rem] items-center justify-between p-1 text-sm xl:flex xl:px-5">
                 <li className="flex items-center gap-5 divide-x divide-[#FFFFFF70]">
                   <ul className="flex items-center text-gray-200 transition-colors">
                     {/* <span className="font-semibold text-2xl">SINIR</span> */}

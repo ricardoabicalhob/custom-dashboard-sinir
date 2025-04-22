@@ -18,13 +18,13 @@ export interface LoginResponseI {
         token :string
         decTipo :unknown
         paaAdmin :boolean
-        isGerador :boolean
+        isGerador :boolean | null
         isGeradorANP :boolean
-        isTransportador :unknown
+        isTransportador :boolean | null
         isTransportadorANP:boolean
-        isDestinador :unknown
+        isDestinador :boolean | null
         isDestinadorANP :boolean
-        isArmazenadorTemporario :unknown
+        isArmazenadorTemporario :boolean | null
         jurCnp :string
         parTipoPessoa :string
         paaCpf :string
@@ -43,16 +43,16 @@ export interface LoginResponseI {
         dataHoje :unknown
         mensagemPrazoSinir :unknown
         gestorTitular :boolean
-        gerador :boolean
+        gerador :boolean | null
         geradorANP :boolean
-        transportador :unknown
+        transportador :boolean | null
         transportadorANP :boolean
         destinadorANP :boolean
-        armazenadorTemporario :boolean
+        armazenadorTemporario :boolean | null
         delegatario :boolean
         operadorLR :boolean
         destinadorLR :boolean
-        destinador :unknown
+        destinador :boolean | null
     },
     totalRecords :number
     erro :boolean

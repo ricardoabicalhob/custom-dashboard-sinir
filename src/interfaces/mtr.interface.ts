@@ -1,3 +1,135 @@
+export interface findByNumberResponseI{
+    manCodigo :number,
+    manResponsavel :string,
+    manNumero :string,
+    manData :number,
+    manDataExpedicao :number,
+    manNomeMotorista :string,
+    manPlacaVeiculo :string,
+    manObservacao: null,
+    manJustificativaCancelamento :string,
+    manNomeMotoristaArmazenamentoTemporario: null,
+    manPlacaVeiculoArmazenamentoTemporario: null,
+    manObservacaoArmazenamentoTemporario: null,
+    manHashCode :string,
+    manDataRecebimentoArmazenamentoTemporario: null,
+    tipoManifesto :number,
+    estado: { estCodigo :number, estAbreviacao :string },
+    parceiroGerador: {
+      parCodigo :number,
+      parDescricao :string,
+      parCnpj: null,
+      parEndereco: null,
+      parNumeroEndereco: null,
+      parUf: null,
+      parCidade: null,
+      parOrgaoEmissor: null,
+      parLicenca: null,
+      spaCodigo :number,
+      possuiPerfil: null,
+      possuiPerfilANP: null
+    },
+    parceiroTransportador: {
+      parCodigo :number,
+      parDescricao :string,
+      parCnpj: null,
+      parEndereco: null,
+      parNumeroEndereco: null,
+      parUf: null,
+      parCidade: null,
+      parOrgaoEmissor: null,
+      parLicenca: null,
+      spaCodigo :number,
+      possuiPerfil: null,
+      possuiPerfilANP: null
+    },
+    parceiroDestinador: {
+      parCodigo :number,
+      parDescricao :string,
+      parCnpj: null,
+      parEndereco: null,
+      parNumeroEndereco: null,
+      parUf: null,
+      parCidade: null,
+      parOrgaoEmissor: null,
+      parLicenca: null,
+      spaCodigo :number,
+      possuiPerfil: null,
+      possuiPerfilANP: null
+    },
+    possuiArmazenamentoTemporario: false,
+    parceiroArmazenadorTemporario: {
+      parCodigo: null,
+      parDescricao :string,
+      parCnpj: null,
+      parEndereco: null,
+      parNumeroEndereco: null,
+      parUf: null,
+      parCidade: null,
+      parOrgaoEmissor: null,
+      parLicenca: null,
+      spaCodigo: null,
+      possuiPerfil: null,
+      possuiPerfilANP: null
+    },
+    parceiroTransportadorArmazenadorTemporario: {
+      parCodigo: null,
+      parDescricao :string,
+      parCnpj: null,
+      parEndereco: null,
+      parNumeroEndereco: null,
+      parUf: null,
+      parCidade: null,
+      parOrgaoEmissor: null,
+      parLicenca: null,
+      spaCodigo: null,
+      possuiPerfil: null,
+      possuiPerfilANP: null
+    },
+    situacaoManifesto: {
+      simCodigo :number,
+      simDescricao :string,
+      simOrdem :number,
+      simDataRecebimento: null
+    },
+    parceiroAcesso: {
+      paaCodigo :number,
+      paaNome :string,
+      paaCpf :string,
+      estCodigo :number
+    },
+    listaManifestoResiduo: [],
+    listaSistema: [],
+    listaManifestoResiduoVariacao: [],
+    maiCodigo: null,
+    maiDeclaracao: null,
+    maiPortoOrigem: null,
+    maiPortoDestino: null,
+    maiTransportadorInternacional: null,
+    maiEndereco: null,
+    maiMunicipio: null,
+    paisTransportador: { paiCodigo :number, paiDescricao :string },
+    maeCodigo: null,
+    maeNotaFiscal: null,
+    maePortoOrigem: null,
+    maePortoDestino: null,
+    paisExportacao: { paiCodigo :number, paiDescricao :string },
+    temMtrComplementar :boolean,
+    manCodigoMtrComplementar: null,
+    mtrProvisorioNumero :string,
+    mtrProvisorioDataRecebimento: null,
+    cdfEmitidoNumero :number,
+    mapCodigo: null,
+    temSolicitacaoAlteracaoRecebimento :boolean,
+    temSolicitacaoAlteracaoRecebimentoAberto: boolean,
+    manCodigoEstadual: null,
+    manNumeroEstadual: null,
+    manDataTransporte: null,
+    manNumeroNotaFiscal: null,
+    manChaveNotaFiscal: null
+  }
+
+
 export interface MTRResponseI {
     manNumero: string;
     manData: number;
@@ -186,5 +318,6 @@ export interface MTRRepositoryI {
     downloadMTR(numeroMTR :string, authorization :string) :Promise<unknown>
     findAllArmazenadorTemporario(unidade :number, dataInicio :string, dataFim :string, authorization :string) :Promise<unknown | null>
     findAllGerador(unidade :number, dataInicio :string, dataFim :string, authorization :string) :Promise<unknown | null>
+    findAllDestinador(unidade :number, dataInicio :string, dataFim :string, authorization :string) :Promise<unknown | null>
     findByNumber(numberMTR :string, authorization :string) :Promise<unknown | null>
 }

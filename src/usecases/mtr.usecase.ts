@@ -22,6 +22,11 @@ class MTRUseCases {
         return result
     }
 
+    findAllDestinador(unidade :number, dataInicio :string, dataFim :string, authorization :string) {
+        const result = this.mtrRepositoryFetch.findAllDestinador(unidade, dataInicio, dataFim, authorization)
+        return result
+    }
+
     findByNumber(numberMTR :string, authorization :string) {
         const result = this.mtrRepositoryFetch.findByNumber(numberMTR, authorization)
         return result

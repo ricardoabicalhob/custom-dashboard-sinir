@@ -1,35 +1,43 @@
 'use client'
 
-import { createContext, Dispatch, ReactNode, SetStateAction, useState } from "react";
-import { AuthToken, User } from "./types";
+import { createContext, Dispatch, ReactNode, SetStateAction, useEffect, useState } from "react";
 import { LoginResponseI } from "@/interfaces/login.interface";
+import { getCookie } from "@/app/(private)/(dashboard)/_actions/actions";
 
 interface AuthProviderProps {
     children :ReactNode
 }
 
 interface AuthContextProps {
-    user :User | undefined
-    setUser :Dispatch<SetStateAction<User | undefined>>
-    token :AuthToken | undefined
-    setToken :Dispatch<SetStateAction<AuthToken | undefined>>
+    token :string | undefined
+    setToken :Dispatch<SetStateAction<string | undefined>>
     loginResponse :LoginResponseI | undefined
     setLoginResponse :Dispatch<SetStateAction<LoginResponseI | undefined>>
+    initialize :()=> void
 }
 
 export const AuthContext = createContext({} as AuthContextProps)
 
 export function AuthProvider({ children } :AuthProviderProps) {
 
-    const [ user, setUser ] = useState<User>()
-    const [ token, setToken ] = useState<AuthToken>()
+    const [ token, setToken ] = useState<string>()
     const [ loginResponse, setLoginResponse ] = useState<LoginResponseI>()
     
+    function initialize() {
+        getCookie()
+        .then(tokenData => {
+            setLoginResponse(tokenData)
+            setToken(tokenData.objetoResposta.token)
+        })
+    }
+
+    useEffect(()=> {
+        initialize()
+    }, [])
 
     return(
         <AuthContext.Provider value={{
-            user, setUser,
-            token, setToken,
+            token, setToken, initialize,
             loginResponse, setLoginResponse
         }}>
             { children }
