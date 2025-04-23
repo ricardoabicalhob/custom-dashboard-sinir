@@ -5,7 +5,6 @@ import { MTRUseCases } from "@/usecases/mtr.usecase"
 
 export async function GetAllDestinador(unidade :number, dataInicio :string, dataFim :string, auth :string) {
     const mtrUseCases = new MTRUseCases()
-    const responseMtrs :MTRCompleteResponseI[] = []
 
     const response :MTRQueryResponseI = await mtrUseCases.findAllDestinador(unidade, dataInicio, dataFim, auth)
 
@@ -21,7 +20,16 @@ export async function GetAllDestinador(unidade :number, dataInicio :string, data
 
     const listMTRByNumberPromisesResolved :MTRResponseI[] = await Promise.all(promisesMTR)
         
-    const allObjectsResponseNoFilter = listMTRByNumberPromisesResolved.filter(mtrData => {
+    const allObjectsReceived = listMTRByNumberPromisesResolved.filter(mtrData => {
+        const mtrCompleteResponse = mtrData as MTRResponseI
+        return(
+            mtrCompleteResponse &&
+            mtrCompleteResponse.situacaoManifesto &&
+            mtrCompleteResponse.situacaoManifesto.simDescricao === "Recebido"
+        )
+    })
+
+    const allObjectsNoFilter = listMTRByNumberPromisesResolved.filter(mtrData => {
         const mtrCompleteResponse = mtrData as MTRResponseI
         return(
             mtrCompleteResponse &&
@@ -31,7 +39,7 @@ export async function GetAllDestinador(unidade :number, dataInicio :string, data
     })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const allMTRsDestinedNoFilter :any[] = allObjectsResponseNoFilter.map(mtrToFilter => ({
+    const allMTRsDestinedReceived :any[] = allObjectsReceived.map(mtrToFilter => ({
         numeroMtr: mtrToFilter.manNumero,
         residuoDescricao: mtrToFilter.listaManifestoResiduo[0]?.residuo?.resDescricao,
         residuoCodigoIbama: mtrToFilter.listaManifestoResiduo[0]?.residuo?.resCodigoIbama,
@@ -43,5 +51,18 @@ export async function GetAllDestinador(unidade :number, dataInicio :string, data
         medidaUnidade: mtrToFilter.listaManifestoResiduo[0]?.unidade?.uniSigla
     }))
 
-    return allMTRsDestinedNoFilter
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const allMTRsNoFilter :any[] = allObjectsNoFilter.map(mtrToFilter => ({
+        numeroMtr: mtrToFilter.manNumero,
+        residuoDescricao: mtrToFilter.listaManifestoResiduo[0]?.residuo?.resDescricao,
+        residuoCodigoIbama: mtrToFilter.listaManifestoResiduo[0]?.residuo?.resCodigoIbama,
+        quantidadeEstimada: mtrToFilter.listaManifestoResiduo[0]?.marQuantidade,
+        quantidadeReal: mtrToFilter.listaManifestoResiduo[0]?.marQuantidadeRecebida,
+        unidadeDescricao: mtrToFilter.parceiroGerador?.parDescricao,
+        destinadorDescricao: mtrToFilter.parceiroDestinador.parDescricao,
+        situacao: mtrToFilter.situacaoManifesto?.simDescricao,
+        medidaUnidade: mtrToFilter.listaManifestoResiduo[0]?.unidade?.uniSigla
+    }))
+
+    return { allMTRsDestinedReceived, allMTRsNoFilter }
 }

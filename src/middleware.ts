@@ -25,6 +25,7 @@ export function middleware(request: NextRequest) {
         authToken = JSON.parse(authTokenString);
     } catch (error) {
         authToken = null;
+        console.error(error)
     }
 
     if (!authToken && publicRoute) {

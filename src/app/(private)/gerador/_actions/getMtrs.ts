@@ -65,7 +65,7 @@ export async function getMtrs(auth :string, loginResponse :LoginResponseI, dataI
                 })
             return allGerador
         } catch (error) {
-            
+            console.error(error)
         }
     }
 }

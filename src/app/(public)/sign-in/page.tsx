@@ -12,7 +12,6 @@ import { Figtree } from 'next/font/google'
 import CumstomNotification from "@/components/CustomNotification"
 import Image from "next/image"
 import logoSinir from "../../../public/logo_sinir_negativa1.png"
-import { LoginResponseI } from "@/interfaces/login.interface"
 
 const figtree = Figtree({ weight: '600', subsets: ['latin'] });
 

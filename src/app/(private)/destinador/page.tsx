@@ -2,7 +2,6 @@
 
 import { AuthContext } from "@/lib/authcontext"
 import { useContext, useEffect, useState } from "react"
-import { GetMTRs } from "../(dashboard)/_actions/getMTRs"
 import { DateRange } from "react-day-picker"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -18,7 +17,7 @@ import { Calendar } from "@/components/ui/calendar"
 import GraficoDestinacao from "../(dashboard)/_components/GraficoDestinacao"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { GetAllDestinador } from "./_actions/getAllDestinador"
-import { MTRCompleteResponseI, MTRResponseI } from "@/interfaces/mtr.interface"
+import GraficoAT from "../(dashboard)/_components/GraficoAT"
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -47,8 +46,8 @@ export default function DestinadorPage() {
         token, loginResponse
     } = useContext(AuthContext)
 
-    const [ asSender, setAsSender ] = useState<DataFilteredProps[]>()
-    const [ wasteGenerated, setWasteGenerated ] = useState<DataFilteredProps[]>()
+    const [ receivedAsSender, setReceivedAsSender ] = useState<DataFilteredProps[]>()
+    const [ createdForDestination, setCreatedForDestination ] = useState<DataFilteredProps[]>()
     const [ dateRange, setDateRange ] = useState<DateRange>()
 
     
@@ -61,13 +60,14 @@ export default function DestinadorPage() {
     }
 
     async function handlePesquisar(periodo :{ from :string | undefined, to :string | undefined }) {
-        setWasteGenerated([])
-        setAsSender([])
+        setCreatedForDestination([])
+        setReceivedAsSender([])
         
         if(token && loginResponse && periodo.from && periodo.to) {
             const response = await GetAllDestinador(loginResponse.objetoResposta.parCodigo, periodo.from, periodo.to, token)
             if(!response) { throw new Error("Nenhum mtr encotrado.") }
-            setAsSender(prevData => [...(prevData || []), ...response])
+            setReceivedAsSender(prevData => [...(prevData || []), ...response.allMTRsDestinedReceived])
+            setCreatedForDestination(prevData => [...(prevData || []), ...response.allMTRsNoFilter])
         }
     }
 
@@ -184,7 +184,7 @@ export default function DestinadorPage() {
                 </TableHeader>
                 <TableBody>
                 {
-                asSender?.map(item => (
+                receivedAsSender?.map(item => (
                     <TableRow key={item.numeroMtr}>
                         <TableCell className="text-black font-semibold">{item.numeroMtr}</TableCell>
                         <TableCell className="text-black">{item.unidadeDescricao}</TableCell>
@@ -216,17 +216,17 @@ export default function DestinadorPage() {
         <div className="flex flex-col p-3 gap-2">
             <BarraDePesquisa />
             
-            <div className="grid grid-cols-1 gap-2">
-                {/* <GraficoDestinacao
-                    title="Resíduos destinados"
+            <div className="grid grid-rows-2 gap-2">
+                <GraficoAT
+                    title="Resíduos gerados para o destinador"
                     subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
-                    dataFiltered={wasteGenerated}
-                /> */}
+                    dataFiltered={createdForDestination}
+                />
 
                 <GraficoDestinacao
                     title="Resíduos tratados como destinador"
                     subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
-                    dataFiltered={asSender}
+                    dataFiltered={receivedAsSender}
                 />
             </div>
 

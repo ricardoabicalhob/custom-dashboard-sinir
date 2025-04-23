@@ -18,6 +18,7 @@ import { Calendar } from "@/components/ui/calendar"
 import GraficoDestinacao from "../(dashboard)/_components/GraficoDestinacao"
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import GraficoAT from "../(dashboard)/_components/GraficoAT"
+import { GetMTRsArmazTemp } from "../(dashboard)/_actions/getMTRsArmazTemp"
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -49,6 +50,7 @@ export default function ArmazenadorTemporarioPage() {
     const [ sentAsAT, setSentAsAT ] = useState<DataFilteredProps[]>()
     const [ allCreatedAT, setAllCreatedAT ] = useState<DataFilteredProps[]>()
     const [ allReceivedAT, setAllReceivedAT ] = useState<DataFilteredProps[]>()
+    const [ allAccumulatedAT, setAllAccumulatedAT ] = useState<DataFilteredProps[]>()
     const [ dateRange, setDateRange ] = useState<DateRange>()
 
     
@@ -78,14 +80,21 @@ export default function ArmazenadorTemporarioPage() {
 
     useEffect(()=> {
         const periodoAT = handleSelectDate(dateRange)
+        const periodoATAcumulado = handleSelectDate({ from: subDays(new Date(Date.now()), 90), to: new Date(Date.now()) })
         
-        if(token && loginResponse && periodoAT?.from && periodoAT.to) {
+        if(token && loginResponse && periodoAT?.from && periodoAT.to && periodoATAcumulado?.from && periodoATAcumulado.to) {
             const response = GetMTRs(token, loginResponse, periodoAT?.from, periodoAT?.to)
             Promise.resolve(response)
             .then(response => {
                 setAllReceivedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFilteredReceivedAT || []])
                 setAllCreatedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedNoFilter || []])
                 setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || []])
+            })
+
+            const responseAT = GetMTRsArmazTemp(token, loginResponse, periodoATAcumulado.from, periodoATAcumulado.to)
+            Promise.resolve(responseAT)
+            .then(response => {
+                setAllAccumulatedAT(prevDataFiltered => [...(prevDataFiltered || []), ...response.armazenadorTempResult?.dataFiltered || []])
             })
         }
     }, [token])
@@ -235,10 +244,16 @@ export default function ArmazenadorTemporarioPage() {
                 />
 
                 <GraficoAT
+                    title="Resíduos acumulados no armazenamento temporário"
+                    subTitle={`${dateRange ?  "Período: " + subDays(new Date(Date.now()), 90).toLocaleDateString() + " a " + (new Date(Date.now())).toLocaleDateString() : ""} (Últimos 90 dias)`}
+                    dataFiltered={allAccumulatedAT}
+                />
+
+                {/* <GraficoAT
                     title="Resíduos recebidos no armazenamento temporário"
                     subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
                     dataFiltered={allReceivedAT}
-                />
+                /> */}
             </div>  
                 <GraficoDestinacao
                     title="Resíduos do armazenamento temporário destinados ao aterro"

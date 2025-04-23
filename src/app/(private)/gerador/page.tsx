@@ -16,7 +16,6 @@ import { CalendarIcon } from "lucide-react"
 import { ptBR } from "date-fns/locale"
 import { Calendar } from "@/components/ui/calendar"
 import GraficoDestinacao from "../(dashboard)/_components/GraficoDestinacao"
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -173,39 +172,39 @@ export default function GeradorPage() {
         )
     }
 
-    function TabelaMTRs() {
-        return(
-            <Table className="flex-grow">
-                <TableCaption>Uma lista de seus manifestos</TableCaption>
-                <TableHeader>
-                <TableRow>
-                    <TableHead>Número do MTR</TableHead>
-                    <TableHead>Gerador</TableHead>
-                    <TableHead>Destinador</TableHead>
-                    <TableHead>Resíduo</TableHead>
-                    <TableHead>Quantidade Estimada</TableHead>
-                    <TableHead>Quantidade Real</TableHead>
-                    <TableHead>Situação</TableHead>
-                </TableRow>
-                </TableHeader>
-                <TableBody>
-                {
-                sentAsGenerator?.map(item => (
-                    <TableRow key={item.numeroMtr}>
-                        <TableCell className="text-black font-semibold">{item.numeroMtr}</TableCell>
-                        <TableCell className="text-black">{item.unidadeDescricao}</TableCell>
-                        <TableCell className="text-black">{item.destinadorDescricao}</TableCell>
-                        <TableCell className="text-black">{`${item.residuoCodigoIbama} - ${item.residuoDescricao}`}</TableCell>
-                        <TableCell className="text-black text-right">{`${item.quantidadeEstimada.toFixed(2)} ${item.medidaUnidade}`}</TableCell>
-                        <TableCell className="text-black text-right">{`${item.quantidadeReal?.toFixed(2) || "-"} ${item.quantidadeReal? item.medidaUnidade :""}`}</TableCell>
-                        <TableCell className="text-black">{item.situacao}</TableCell>
-                    </TableRow>
-                ))
-            }    
-                </TableBody>
-            </Table>
-        )
-    }
+    // function TabelaMTRs() {
+    //     return(
+    //         <Table className="flex-grow">
+    //             <TableCaption>Uma lista de seus manifestos</TableCaption>
+    //             <TableHeader>
+    //             <TableRow>
+    //                 <TableHead>Número do MTR</TableHead>
+    //                 <TableHead>Gerador</TableHead>
+    //                 <TableHead>Destinador</TableHead>
+    //                 <TableHead>Resíduo</TableHead>
+    //                 <TableHead>Quantidade Estimada</TableHead>
+    //                 <TableHead>Quantidade Real</TableHead>
+    //                 <TableHead>Situação</TableHead>
+    //             </TableRow>
+    //             </TableHeader>
+    //             <TableBody>
+    //             {
+    //             sentAsGenerator?.map(item => (
+    //                 <TableRow key={item.numeroMtr}>
+    //                     <TableCell className="text-black font-semibold">{item.numeroMtr}</TableCell>
+    //                     <TableCell className="text-black">{item.unidadeDescricao}</TableCell>
+    //                     <TableCell className="text-black">{item.destinadorDescricao}</TableCell>
+    //                     <TableCell className="text-black">{`${item.residuoCodigoIbama} - ${item.residuoDescricao}`}</TableCell>
+    //                     <TableCell className="text-black text-right">{`${item.quantidadeEstimada.toFixed(2)} ${item.medidaUnidade}`}</TableCell>
+    //                     <TableCell className="text-black text-right">{`${item.quantidadeReal?.toFixed(2) || "-"} ${item.quantidadeReal? item.medidaUnidade :""}`}</TableCell>
+    //                     <TableCell className="text-black">{item.situacao}</TableCell>
+    //                 </TableRow>
+    //             ))
+    //         }    
+    //             </TableBody>
+    //         </Table>
+    //     )
+    // }
 
     function BarraDePesquisa() {
         return(

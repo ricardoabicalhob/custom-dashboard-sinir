@@ -1,6 +1,6 @@
 'use client'
 
-import { AuthContext, AuthProvider } from "@/lib/authcontext";
+import { AuthContext } from "@/lib/authcontext";
 import "../globals.css"
 import Image from "next/image";
 import logoSinir from "../../public/logo_sinir_negativa1.png"
