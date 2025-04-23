@@ -48,8 +48,7 @@ export default function ArmazenadorTemporarioPage() {
 
     const [ sentAsAT, setSentAsAT ] = useState<DataFilteredProps[]>()
     const [ allCreatedAT, setAllCreatedAT ] = useState<DataFilteredProps[]>()
-    // @typescript-eslint/no-unused-vars
-    const [ allReceivedAT, setAllReceivedAT ] = useState<DataFilteredProps[]>()
+    // const [ allReceivedAT, setAllReceivedAT ] = useState<DataFilteredProps[]>()
     const [ allAccumulatedAT, setAllAccumulatedAT ] = useState<DataFilteredProps[]>()
     const [ dateRange, setDateRange ] = useState<DateRange>()
 
@@ -64,14 +63,14 @@ export default function ArmazenadorTemporarioPage() {
 
     function handlePesquisar(periodo :{ from :string | undefined, to :string | undefined }) {
         setAllCreatedAT([])
-        setAllReceivedAT([])
+        // setAllReceivedAT([])
         setSentAsAT([])
         
         if(token && loginResponse && periodo.from && periodo.to) {
             const response = GetMTRs(token, loginResponse, periodo.from, periodo.to)
             Promise.resolve(response)
                 .then(response => {
-                    setAllReceivedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFilteredReceivedAT || []])
+                    // setAllReceivedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFilteredReceivedAT || []])
                     setAllCreatedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedNoFilter || []])
                     setSentAsAT(prevData => [...(prevData ||[]), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || []])
                 })
@@ -86,7 +85,7 @@ export default function ArmazenadorTemporarioPage() {
             const response = GetMTRs(token, loginResponse, periodoAT?.from, periodoAT?.to)
             Promise.resolve(response)
             .then(response => {
-                setAllReceivedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFilteredReceivedAT || []])
+                // setAllReceivedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFilteredReceivedAT || []])
                 setAllCreatedAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedNoFilter || []])
                 setSentAsAT(prevData => [...(prevData || []), ...response.armazenamentoTemporario?.allMTRsReceivedFiltered || []])
             })

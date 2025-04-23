@@ -48,29 +48,17 @@ export interface DataFilteredProps {
 
 export default function Dashboard() {
 
-  // const [ auth, setAuth ] = useState<string>()
   const [ sentAsGenerator, setSentAsGenerator ] = useState<DataFilteredProps[]>()
   const [ sentAsAT, setSentAsAT ] = useState<DataFilteredProps[]>()
   const [ sentAsGeneratorAndAT, setSentAsGeneratorAndAT ] = useState<DataFilteredProps[]>()
   const [ dataFilteredAccumulatedInAT, setDataFilteredAccumulatedInAT ] = useState<DataFilteredProps[]>()
   const [ dateRange, setDateRange ] = useState<DateRange>()
 
-  //------------------------------------------------------------------------------------------
-  // console.log("dado console.log somente para usar a variavel e impedir erro no buil", data)
-  //------------------------------------------------------------------------------------------
 
   const { 
     token,
     loginResponse 
   } = useContext(AuthContext)
-
-  // async function initialize() {
-  //   const tokenData :LoginResponseI = await getCookie()
-  //   setLoginResponse(tokenData)
-  //   const tokenDecoded = jwt.decode(tokenData.objetoResposta.token, {complete: true})
-  //   setToken(tokenDecoded?.payload as AuthToken)
-  //   setAuth(tokenData.objetoResposta.token)
-  // }
 
   useEffect(()=> {
     const periodoG = handleSelectDate(dateRange)
@@ -92,10 +80,6 @@ export default function Dashboard() {
         })
     }
   }, [token])
-
-  // useEffect(()=> {
-  //   initialize()
-  // }, [])
 
   function handleDisconnect() {
     deleteCookie()

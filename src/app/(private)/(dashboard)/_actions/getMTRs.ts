@@ -1,7 +1,7 @@
 'use server'
 
 import { LoginResponseI } from "@/interfaces/login.interface"
-import { findByNumberResponseI, MTRCompleteResponseI, MTRResponseI } from "@/interfaces/mtr.interface"
+import { MTRCompleteResponseI, MTRResponseI } from "@/interfaces/mtr.interface"
 import { MTRUseCases } from "@/usecases/mtr.usecase"
 
 export async function GetMTRs(auth :string, loginResponse :LoginResponseI, dataInicio :string, dataFim :string) {
