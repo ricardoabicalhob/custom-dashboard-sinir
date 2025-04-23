@@ -24,6 +24,15 @@ export async function GetMTRs(auth :string, loginResponse :LoginResponseI, dataI
                     
 
                     const allObjectsResponseNoFilter = mtrComplete
+                        .filter(mtrData => {
+                            const mtrCompleteResponse = mtrData as MTRCompleteResponseI
+                            return(
+                                mtrCompleteResponse &&
+                                mtrCompleteResponse.objetoResposta &&
+                                mtrCompleteResponse.objetoResposta.situacaoManifesto &&
+                                mtrCompleteResponse.objetoResposta.situacaoManifesto.simDescricao !== "Cancelado"
+                            )
+                        })
                         .map(mtrDataFiltrado => (mtrDataFiltrado as MTRCompleteResponseI).objetoResposta)
                     
                     const allObjectsResponseFilteredReceived = mtrComplete

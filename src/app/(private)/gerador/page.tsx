@@ -16,6 +16,7 @@ import { CalendarIcon } from "lucide-react"
 import { ptBR } from "date-fns/locale"
 import { Calendar } from "@/components/ui/calendar"
 import GraficoDestinacao from "../(dashboard)/_components/GraficoDestinacao"
+import GraficoAT from "../(dashboard)/_components/GraficoAT"
 
 const periodoSchema = z.object({
   dateRange: z.object({
@@ -222,7 +223,7 @@ export default function GeradorPage() {
             <BarraDePesquisa />
             
             <div className="grid grid-cols-2 gap-2">
-                <GraficoDestinacao
+                <GraficoAT
                     title="Resíduos gerados"
                     subTitle={`${dateRange ?  "Período: " + dateRange?.from?.toLocaleDateString() + " a " + dateRange?.to?.toLocaleDateString() : ""}`}
                     dataFiltered={wasteGenerated}
