@@ -1,12 +1,9 @@
 'use client'
 
-import { deleteCookie, getCookie } from "./_actions/actions";
+import { deleteCookie } from "./_actions/actions";
 import { redirect } from "next/navigation";
 import { Suspense, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/lib/authcontext";
-import { AuthToken } from "@/lib/types";
-import jwt from "jsonwebtoken";
-import { LoginResponseI } from "@/interfaces/login.interface";
 import { GetMTRs } from "./_actions/getMTRs";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
@@ -64,7 +61,7 @@ export default function Dashboard() {
 
   const { 
     token,
-    loginResponse, setLoginResponse 
+    loginResponse 
   } = useContext(AuthContext)
 
   // async function initialize() {
